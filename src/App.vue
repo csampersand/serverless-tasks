@@ -1,17 +1,40 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <input type="text" v-model="input" v-on:keyup.enter="addTodo(input)" />
+    <ul>
+      <li
+        v-for="(todo, i) in todos"
+        v-bind:key="i"
+        v-bind:class="{ complete: todo.complete }"
+        v-on:click="todo.complete = !todo.complete"
+      >
+        {{ todo.complete ? "✔︎" : "❏" }} {{ todo.text }}
+      </li>
+      <li v-if="input" class="new-todo">❏ {{ input }}</li>
+    </ul>
+    <button v-on:click="todos = []">Clear</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
   name: "app",
-  components: {
-    HelloWorld
+  data() {
+    return {
+      todos: [
+        { text: "Task 1", complete: false },
+        { text: "Task 2", complete: false },
+        { text: "Task 3", complete: false }
+      ],
+      input: ""
+    };
+  },
+  methods: {
+    addTodo: function(text) {
+      if (!text) return;
+      this.todos.push({ text, complete: false });
+      this.input = "";
+    }
   }
 };
 </script>
@@ -21,8 +44,18 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin: 60px 120px;
+  font-size: 24px;
+}
+ul {
+  list-style-type: none;
+  cursor: pointer;
+}
+.complete {
+  text-decoration: line-through;
+}
+.new-todo {
+  color: gray;
 }
 </style>
