@@ -5,25 +5,28 @@
     </transition>
     <div>
       <input type="text" v-model="input" v-on:keyup.enter="addTodo(input)" />
-      <ul>
-        <li
-          v-for="(todo, i) in todos"
-          v-bind:key="i"
-          v-bind:class="{ complete: todo.complete }"
-          v-on:click="toggleTodo(todo)"
-        >
-          {{ todo.complete ? "✔︎" : "❏" }} {{ todo.text }}
-        </li>
-        <li v-if="input" class="new-todo">❏ {{ input }}</li>
-      </ul>
+      <todo
+        v-for="(todo, i) in todos"
+        v-bind:key="i"
+        v-bind:todo="todo"
+        v-on:toggle="toggleTodo(todo)"
+        v-on:delete="deleteTodo(todo)"
+      >
+      </todo>
+      <todo v-if="input" :todo="{ new: true }">{{ input }}</todo>
       <button v-on:click="clearTodos()">Clear</button>
     </div>
   </div>
 </template>
 
 <script>
+import todo from "./components/Todo.vue";
+
 export default {
   name: "app",
+  components: {
+    todo
+  },
   data() {
     return {
       todos: [
@@ -67,6 +70,11 @@ export default {
         };
       });
     },
+    deleteTodo: async function(todo) {
+      todo.deleting = true;
+      await fetch(`/api/delete?id=${todo.id}`);
+      this.getTodos();
+    },
     clearTodos: async function() {
       await fetch("/api/clear");
       this.getTodos();
@@ -86,18 +94,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin: 60px 120px;
-  font-size: 24px;
-}
-ul {
-  list-style-type: none;
-  cursor: pointer;
-}
-.complete {
-  text-decoration: line-through;
-}
-.new-todo {
-  color: gray;
+  margin: 4em 4em;
 }
 .loading {
   position: fixed;

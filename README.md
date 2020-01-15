@@ -1,5 +1,7 @@
 # task
 
+I wrote this during my lunch break because I wanted to make something serverless. 
+
 ## Project setup
 ```
 npm install
